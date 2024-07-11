@@ -1,8 +1,8 @@
 import TodoItem from "./TodoItem";
 
-export default function TodoList({ todos, remove }: { todos: Todo[], remove: removeTodo }) {
+export default function TodoList({ todos, remove, update }: { todos: Todo[], remove: removeTodo, update: updateTodo }) {
 
-    const nodeList = todos.map((todo, index) => <TodoItem key={todo.id} no={index + 1} todo={todo} remove={remove} />)
+    const nodeList = todos.map((todo, index) => <TodoItem key={todo.id} no={index + 1} todo={todo} remove={remove} update={update} />)
 
     return (
         <div className="border-solid border-gray-500 rounded-lg p-3 flex flex-col">

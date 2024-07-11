@@ -9,20 +9,51 @@ export default function TodoBox() {
     const [todos, setTodos] = useState<Array<Todo>>([])
 
     useEffect(() => {
-        setTodos([
-            { id: "0", title: "makan", complete: false },
-            { id: "1", title: "minum", complete: true },
-            { id: "2", title: "Futsal", complete: true }
-        ])
+        loadTodo()
     }, [])
 
-    const addTodo: addTodo = (title: string, complete: boolean) => {
-        const id = Date.now().toString()
-        setTodos([...todos, { id, title, complete }])
+    const loadTodo: loadTodo = async () => {
+        const response = await fetch('/api/todos')
+        const json = await response.json()
+        setTodos(json)
     }
 
-    const removeTodo: removeTodo = (id: string) => {
-        setTodos(todos.filter(todo => todo.id !== id))
+    const addTodo: addTodo = async (title: string, complete: boolean) => {
+        const response = await fetch('/api/todos', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ title, complete }),
+        })
+        const json = await response.json()
+        setTodos([...todos, { ...json }])
+    }
+
+    const removeTodo: removeTodo = async (id: string) => {
+        const response = await fetch(`/api/todos/${id}`, {
+            method: "DELETE"
+        })
+        const json = await response.json()
+        setTodos(todos.filter(todo => todo.id !== json.id))
+    }
+
+    const updateTodo: updateTodo = async (id: string, title: string, complete: boolean) => {
+        const response = await fetch(`/api/todos/${id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ title, complete })
+        })
+        const json = await response.json()
+        setTodos(todos.map(todo => {
+            if (todo.id == json.id) {
+                todo.title = json.title
+                todo.complete = json.complete
+            }
+            return todo
+        }))
     }
 
     return (
@@ -33,7 +64,7 @@ export default function TodoBox() {
             <div>
                 <TodoForm add={addTodo} />
             </div>
-            <TodoList todos={todos} remove={removeTodo} />
+            <TodoList todos={todos} remove={removeTodo} update={updateTodo} />
         </div>
     )
 }
