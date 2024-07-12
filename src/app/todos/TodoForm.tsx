@@ -1,15 +1,19 @@
 "use client"
 
+import { createTodo } from "@/lib/redux/todos/todosSlice"
 import { useState } from "react"
+import { useDispatch } from "react-redux"
 
-export default function TodoForm({ add }: { add: addTodo }) {
-    
+export default function TodoForm() {
+
+    const dispatch: any = useDispatch()
+
     const [title, setTitle] = useState('')
     const [complete, setComplete] = useState(false)
 
     const submit = (e: any) => {
         e.preventDefault()
-        add(title, complete)
+        dispatch(createTodo(title, complete))
         setTitle('')
         setComplete(false)
     }

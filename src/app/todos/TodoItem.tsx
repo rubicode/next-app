@@ -1,15 +1,19 @@
 "use client"
 
+import { removeTodoAsync, updateTodoAsync } from "@/lib/redux/todos/todosSlice"
 import { useState } from "react"
+import { useDispatch } from "react-redux"
 
-export default function TodoItem({ no, todo, remove, update }: { no: number, todo: Todo, remove: removeTodo, update: updateTodo }) {
+export default function TodoItem({ no, todo }: { no: number, todo: Todo }) {
+
+    const dispatch: any = useDispatch()
 
     const [isEdit, setIsEdit] = useState(false)
     const [title, setTitle] = useState(todo.title)
     const [complete, setComplete] = useState(todo.complete)
 
     const save = () => {
-        update(todo.id, title, complete)
+        dispatch(updateTodoAsync({id:todo.id, title, complete}))
         setIsEdit(false)
     }
 
@@ -48,7 +52,7 @@ export default function TodoItem({ no, todo, remove, update }: { no: number, tod
                 <div className="basis-1/4">{todo.complete ? 'sudah' : 'belum'}</div>
                 <div className="basis-1/4">
                     <button className="bg-green-700 rounded-md text-white p-3 mr-1" onClick={() => setIsEdit(true)}>edit</button>
-                    <button className="bg-red-700 rounded-md text-white p-3" onClick={() => remove(todo.id)}>delete</button>
+                    <button className="bg-red-700 rounded-md text-white p-3" onClick={() => dispatch(removeTodoAsync(todo.id))}>delete</button>
                 </div>
             </div>
         )

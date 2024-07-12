@@ -2,12 +2,5 @@ declare interface Todo {
     id: string
     title: string
     complete: boolean,
+    sent?: boolean
 }
-
-declare type loadTodo = () => void;
-
-declare type addTodo = (title: string, complete: boolean) => void;
-
-declare type updateTodo = (id: string, title: string, complete: boolean) => void;
-
-declare type removeTodo = (id: string) => void;

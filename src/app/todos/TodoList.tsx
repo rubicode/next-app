@@ -1,8 +1,21 @@
+"use client"
+
+import { useDispatch, useSelector } from "react-redux";
 import TodoItem from "./TodoItem";
+import { loadTodoAsync, selectTodos } from "../../lib/redux/todos/todosSlice";
+import { useEffect } from "react";
 
-export default function TodoList({ todos, remove, update }: { todos: Todo[], remove: removeTodo, update: updateTodo }) {
+export default function TodoList() {
 
-    const nodeList = todos.map((todo, index) => <TodoItem key={todo.id} no={index + 1} todo={todo} remove={remove} update={update} />)
+    const todos = useSelector(selectTodos)
+
+    const dispatch: any = useDispatch()
+
+    useEffect(() => {
+        dispatch(loadTodoAsync())
+    }, [dispatch])
+
+    const nodeList = todos.map((todo: any, index: number) => <TodoItem key={todo.id} no={index + 1} todo={todo} />)
 
     return (
         <div className="border-solid border-gray-500 rounded-lg p-3 flex flex-col">
