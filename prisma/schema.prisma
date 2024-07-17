@@ -14,7 +14,14 @@ datasource db {
 }
 
 model Todo {
-  id String @id @default(auto()) @map("_id") @db.ObjectId
-  title String
-  complete Boolean @default(false)
+  id        String @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  complete  Boolean @default(false)
+}
+
+model User {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  email         String  @unique
+  password      String
+  refreshToken  String?
 }

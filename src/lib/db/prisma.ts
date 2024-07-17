@@ -1,7 +1,25 @@
 import { PrismaClient } from '@prisma/client'
+import { hashPassword } from '@/lib/helpers/util'
+
 
 const prismaClientSingleton = () => {
-  return new PrismaClient()
+  const prismaClient =  new PrismaClient().$extends({
+    model: {
+      user: {
+        createUser(email: string, password: string) {
+          const hash = hashPassword(password)
+          return prismaClient.user.create({
+            data: {
+              email,
+              password: hash
+            },
+          })
+        },
+      },
+    },
+  })
+
+  return prismaClient
 }
 
 declare const globalThis: {
