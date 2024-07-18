@@ -14,7 +14,7 @@ export const setToken = (token: string) => {
 
 
 try {
-    const token = JSON.parse(JSON.parse(localStorage.getItem('persist:root') || '{}').user)?.value?.token
+    const token = JSON.parse(JSON.parse(localStorage.getItem('persist:root') || '{}').user)?.value?.accessToken
     if (token) {
         setToken(token)
     }

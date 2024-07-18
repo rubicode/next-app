@@ -7,23 +7,27 @@ const privateAPI = [
     '/api/users'
 ]
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
 
-    // const currentUser = request.cookies.get('currentUser')?.value
+    const accessToken = request.cookies.get('accessToken')?.value
 
-    // if (currentUser && !request.nextUrl.pathname.startsWith('/todos')) {
-    //     return NextResponse.rewrite(new URL('/', request.url))
-    // }
+    if (request.nextUrl.pathname.startsWith('/todos')) {
+        if (accessToken) {
+            return NextResponse.next()
+        } else {
+            return NextResponse.redirect(new URL('/', request.url))
+        }
+
+    }
 
     if (privateAPI.includes(request.nextUrl.pathname)) {
         try {
             const authorization: string = request.headers.get('Authorization') || ''
             const token = authorization.slice(7)
-            console.log('masuk sini', authorization, token)
-            const decoded = decodeToken(token)
-            return NextResponse.next();
+            const decoded = await decodeToken(token)
+            if (decoded.payload.type !== "accessToken") throw Error("token is not valid")
+            return NextResponse.next()
         } catch (e) {
-            console.log(e)
             return NextResponse.json({ error: 'token is not valid' }, { status: 500 })
         }
     }

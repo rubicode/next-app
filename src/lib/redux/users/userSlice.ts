@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit'
 import { login, logout } from './usersAPI'
 import { setToken } from '../../api'
+import Cookies from "js-cookie"
 
 interface UserState {
     value: User,
@@ -24,6 +25,10 @@ export const loginAsync = createAsyncThunk(
         try {
             const response = await login(email, password)
             setToken(response.data.accessToken)
+            Cookies.set("accessToken", response.data.accessToken, {
+                expires: new Date(new Date().getTime() + 1 * 60 * 60 * 1000),
+                path: "/",
+            })
             return response.data
         }
         catch (e: any) {
@@ -59,7 +64,6 @@ export const userSlice = createSlice({
                     state.status = 'idle'
                     state.value = action.payload
                 } else {
-                    console.log('masuk sini')
                     state.status = 'error'
                     state.value = initialState.value
                 }
@@ -82,8 +86,6 @@ export const selectStatus = (state: any) => state.user.status
 
 export const loginUser = ({ email, password }: { email: string, password: string }) => (dispatch: any, getState: any) => {
     dispatch(loginAsync({ email, password }))
-    const currentValue = selectUser(getState())
-    console.log(currentValue)
 }
 
 export const logoutUser = () => (dispatch: any, getState: any) => {

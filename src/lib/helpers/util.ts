@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
+import * as jose from 'jose'
 
 const saltRound = 10
 const secret = "Rubicamp"
@@ -8,16 +8,18 @@ export const comparePassword = (password: string, hash: string): boolean => bcry
 
 export const hashPassword = (password: string): string => bcrypt.hashSync(password, saltRound)
 
-export const createAccessToken = (data: any) => jwt.sign(
-    { data },
-    secret,
-    { expiresIn: 30 }
-)
+export const createAccessToken = async (data: any) => await new jose.SignJWT({data, type: 'accessToken'})
+.setProtectedHeader({ alg: 'HS256' })
+.setIssuedAt()
+.setExpirationTime('1d')
+.sign(new TextEncoder().encode(secret))
 
-export const createRefreshToken = (data: any) => jwt.sign(
-    { data },
-    secret,
-    { expiresIn: 60 }
-)
+export const createRefreshToken = async (data: any) => await new jose.SignJWT({data, type: 'refreshToken'})
+.setProtectedHeader({ alg: 'HS256' })
+.setIssuedAt()
+.setExpirationTime('2d')
+.sign(new TextEncoder().encode(secret))
 
-export const decodeToken = (token: string) => jwt.verify(token, secret);
+export const decodeToken = async (token: string) => await jose.jwtVerify(
+    token, new TextEncoder().encode(secret)
+);

@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
         if (!(user && comparePassword(password, user.password))) throw Error("email or password wrong")
 
-        const refreshToken = createRefreshToken({ userid: user.id })
+        const refreshToken = await createRefreshToken({ userid: user.id })
 
         await prisma.user.update({
             where: {
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
 
         return Response.json({
             email: user.email,
-            accessToken: createAccessToken({ userid: user.id }),
+            accessToken: await createAccessToken({ userid: user.id }),
             refreshToken
         })
     } catch (error: any) {

@@ -17,7 +17,7 @@ export async function POST(request: Request) {
 
         const user = await prisma.user.createUser(email, password)
 
-        const refreshToken = createRefreshToken({ userid: user.id })
+        const refreshToken = await createRefreshToken({ userid: user.id })
 
         await prisma.user.update({
             where: {
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
         return Response.json({
             email: user.email,
-            accessToken: createAccessToken({ userid: user.id }),
+            accessToken: await createAccessToken({ userid: user.id }),
             refreshToken
         })
     } catch (error: any) {
